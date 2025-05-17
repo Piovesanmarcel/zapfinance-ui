@@ -63,14 +63,15 @@ Descrição: Antibióticos</textarea>
   async function enviar() {
     const token = document.getElementById("token").value.trim();
     const numero = document.getElementById("numero").value.trim();
+    const texto = document.getElementById("mensagem").value.trim();
     const respostaEl = document.getElementById("resposta");
 
-    if (!token || !numero) {
-      respostaEl.innerText = "❌ Por favor, preencha o token e o número.";
+    if (!token || !numero || !texto) {
+      respostaEl.innerText = "❌ Por favor, preencha todos os campos.";
       return;
     }
 
-    respostaEl.innerText = "⏳ Enviando mensagem template...";
+    respostaEl.innerText = "⏳ Enviando mensagem...";
 
     try {
       const res = await fetch("https://graph.facebook.com/v22.0/681838378340404/messages", {
@@ -82,18 +83,15 @@ Descrição: Antibióticos</textarea>
         body: JSON.stringify({
           messaging_product: "whatsapp",
           to: numero,
-          type: "template",
-          template: {
-            name: "hello_world",
-            language: { code: "en_US" }
-          }
+          type: "text",
+          text: { body: texto },
         }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        respostaEl.innerText = "✅ Template enviado com sucesso!";
+        respostaEl.innerText = "✅ Mensagem enviada com sucesso!";
       } else {
         respostaEl.innerText = "❌ Erro ao enviar:\n" + JSON.stringify(data, null, 2);
       }
