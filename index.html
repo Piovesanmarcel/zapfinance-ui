@@ -59,44 +59,46 @@ Descrição: Antibióticos</textarea>
     <div id="resposta" style="margin-top:1rem; font-weight: bold;"></div>
   </div>
 
-   <script>
+  <script>
   async function enviar() {
     const token = document.getElementById("token").value.trim();
     const numero = document.getElementById("numero").value.trim();
-    const texto = document.getElementById("mensagem").value.trim();
     const respostaEl = document.getElementById("resposta");
 
-    if (!token || !numero || !texto) {
-      respostaEl.innerText = "❌ Por favor, preencha todos os campos.";
+    if (!token || !numero) {
+      respostaEl.innerText = "❌ Por favor, preencha o token e o número.";
       return;
     }
 
-    respostaEl.innerText = "⏳ Enviando mensagem...";
+    respostaEl.innerText = "⏳ Enviando mensagem template...";
 
     try {
       const res = await fetch("https://graph.facebook.com/v22.0/681838378340404/messages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           messaging_product: "whatsapp",
           to: numero,
-          type: "text",
-          text: { body: texto },
+          type: "template",
+          template: {
+            name: "hello_world",
+            language: { code: "en_US" }
+          }
         }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        respostaEl.innerText = "✅ Mensagem enviada com sucesso!";
+        respostaEl.innerText = "✅ Template enviado com sucesso!";
       } else {
         respostaEl.innerText = "❌ Erro ao enviar:\n" + JSON.stringify(data, null, 2);
       }
     } catch (err) {
-      respostaEl.innerText = "❌ Falha na conexão:\n" + err.message;
+      respostaEl.innerText = "❌ Falha na requisição:\n" + err.message;
     }
   }
 </script>
